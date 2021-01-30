@@ -1,0 +1,8 @@
+# pypi
+twine
+wheel
+
+# pgeopy
+loggerpy
+pandas
+numpy
