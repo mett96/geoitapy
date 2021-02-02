@@ -3,9 +3,10 @@ import loggerpy
 import urllib.request
 import urllib.error
 import zipfile
+import pandas as pd
 
 from geoitapy.exceptions import InvalidVersion
-from geoitapy.util import logger_level
+from geoitapy.util import logger_level, DATA_FIELD
 
 logger = loggerpy.Logger()
 logger.name = "geoitapy"
@@ -32,6 +33,14 @@ def _check_version(version: str) -> bool:
 
 
 def download_database(version: str = "latest"):
+    """
+    It downloads the latest version of the database if not specific version is specified.
+    Otherwise the required version is searched, if not found the latest version is downloaded.
+
+    :param version: specified version [default: latest]
+    :type version: str
+    :return: None
+    """
     if not _check_version(version):
         raise InvalidVersion(version)
 
@@ -72,3 +81,10 @@ def download_database(version: str = "latest"):
         zip_file.extractall(DATABASE_FOLDER)
     # remove the archive
     os.remove(os.path.join(DATABASE_FOLDER, "tmp.zip"))
+
+
+def load_database() -> pd.DataFrame:
+    db_path = os.path.join(DATABASE_FOLDER, 'geoitapy_db.csv')
+    database = pd.read_csv(db_path, sep=';', encoding='utf-8')
+
+    return database
