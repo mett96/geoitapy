@@ -85,6 +85,10 @@ def download_database(version: str = "latest"):
 
 def load_database() -> pd.DataFrame:
     db_path = os.path.join(DATABASE_FOLDER, 'geoitapy_db.csv')
-    database = pd.read_csv(db_path, sep=';', encoding='utf-8')
-    database.CAP = database.CAP.apply(lambda x: f"{x:05}")
+    database = pd.read_csv(db_path,
+                           sep=';',
+                           encoding='utf-8',
+                           dtype={"CAP": str},
+                           keep_default_na=False)
+    # database.CAP = database.CAP.apply(lambda x: f"{x:05}")
     return database
