@@ -38,7 +38,14 @@ print('Old version:', old_version)
 new_version = input('New version: ')
 
 els = new_version.split('.')
-if len(els) != 3:
+print(len(els))
+if len(els) == 1:
+    els += ['0', '0']
+elif len(els) == 2:
+    els.append('0')
+elif len(els) == 3:
+    pass
+else:
     raise ValueError("The version has to be formatted X.Y.Z")
 
 maj, mid, mino = els
@@ -56,6 +63,9 @@ elif mino > o_min:
 
 if not ok:
     raise ValueError(f"The new version has to be major then older ({new_version} < {old_version})")
+
+print("New version:", maj, mid, mino)
+new_version = '.'.join(els)
 
 if args.production:
     config.set('pypi', 'version', new_version)
