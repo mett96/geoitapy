@@ -17,6 +17,8 @@ DATA_FIELD = [
     "provincia",
     "provincia_iso",
     "regione",
+    "stato",
+    "stato_iso",
     "latitude",
     "longitude",
     "frazioni",
