@@ -85,3 +85,14 @@ Otherwise pass only a tuple or list with two elements (latitude, longitude)
     row = row.drop("id")
 
     return row
+
+
+def isnull(element: (np.float64, pd.Series, pd.DataFrame)) -> bool:
+    if isinstance(element, np.float64):
+        return pd.isnull(element)
+    elif isinstance(element, pd.Series):
+        return pd.isnull(element).all()
+    elif isinstance(element, pd.DataFrame):
+        return pd.isnull(element).all().all()
+
+    return False
