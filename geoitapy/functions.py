@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from geoitapy import database
+from geoitapy import database, logger
 from geoitapy.util import DATA_FIELD
 
 
@@ -50,26 +50,37 @@ Otherwise pass only a tuple or list with two elements (latitude, longitude)
     database["distance"] = database.apply(_closest, axis=1, args=(latitude, longitude))
     rows = database[database.distance == database.distance.min()]
     closest_rows = rows[rows.distance < max_distance]
-    
+    # logger.debug(closest_rows.shape)
+    # for idx, row in closest_rows.iterrows():
+    #     logger.info('\n', row)
+
     if closest_rows.shape[0] == 0:
-        print(rows)
-        input('min distance too far')
-        row = pd.Series([np.nan]*len(DATA_FIELD), DATA_FIELD)
+        logger.warning('Distance between coordinates larger than `max_distance`, relax the threshold')
+        row = pd.Series([np.nan] * len(DATA_FIELD), DATA_FIELD)
     elif closest_rows.shape[0] == 1:
         row = closest_rows.iloc[0]
     else:
         group_df = closest_rows.groupby(['provincia_iso'], as_index=False)
-
-        if len(group_df.groups) == 1:
-            key = list(group_df.groups)[0]
-            group = group_df.get_group(key)
-        else:
+        group_size = group_df.size()
+        logger.debug('\n', group_size)
+        group_max_count = group_size[group_size["size"] == group_size["size"].max()]
+        logger.debug(group_max_count.shape, '\n', group_max_count)
+        if group_max_count.shape[0] > 1:
             raise RuntimeError("Multiple PROV_ISO")
+        group = group_df.get_group(group_max_count.iloc[0].provincia_iso)
 
         row = group.apply(
             lambda x: ", ".join([str(el) for el in x.unique()]),
             axis=0
         )
+
+        def _filter_empty(x: str) -> str:
+            xl = x.split(',')
+            xl = [ll.strip() for ll in xl]
+            return ','.join(sorted(list(filter(None, xl))))
+
+        row.frazioni = _filter_empty(row.frazioni)
+        row.localita = _filter_empty(row.localita)
 
     row = row.drop("id")
 
