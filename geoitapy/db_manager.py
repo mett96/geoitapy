@@ -88,7 +88,7 @@ def load_database() -> pd.DataFrame:
     database = pd.read_csv(db_path,
                            sep=';',
                            encoding='utf-8',
-                           dtype={"CAP": str},
+                           # dtype={"CAP": str},
                            converters={
                                "latitude": lambda x: float(x),
                                "longitude": lambda x: float(x)
@@ -96,4 +96,5 @@ def load_database() -> pd.DataFrame:
                            keep_default_na=False)
     logger.debug('\n', database.dtypes)
     database.drop("link", inplace=True, axis=1)
+    database.CAP = database.CAP.apply(lambda x: f"{x:05}")
     return database
