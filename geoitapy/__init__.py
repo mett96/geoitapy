@@ -8,4 +8,4 @@ logger.print_level = Level.INFO
 download_database()
 database = load_database()
 
-from geoitapy.functions import search_location, isnull
+from geoitapy.functions import search_location, isnull, get_caps

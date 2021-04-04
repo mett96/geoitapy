@@ -98,7 +98,7 @@ def isnull(element: (np.float64, pd.Series, pd.DataFrame)) -> bool:
     return False
 
 
-def get_cap() -> list:
+def get_caps() -> list:
     cap: list = database["CAP"].unique().tolist()
     print(cap)
 
