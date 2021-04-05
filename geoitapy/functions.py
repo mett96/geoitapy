@@ -98,8 +98,10 @@ def isnull(element: (np.float64, pd.Series, pd.DataFrame)) -> bool:
     return False
 
 
-def get_caps() -> list:
-    cap: list = database["CAP"].unique().tolist()
-    print(cap)
+def get_caps() -> pd.DataFrame:
+    df_group_cap = database.groupby("CAP")
+    unique_cap = df_group_cap[["latitude", "longitude"]].mean()
+    # data_unique["cap"] = df_unique_cp_group.groups.keys()
+    unique_cap = unique_cap.reset_index()
 
-    return cap
+    return unique_cap
